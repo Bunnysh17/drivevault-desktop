@@ -1,0 +1,54 @@
+{
+  "name": "drivevault-desktop",
+  "version": "1.0.0",
+  "description": "DriveVault — automatic Google Drive backup for local files and Medal recordings (Windows).",
+  "main": "dist/main/main.js",
+  "author": "DriveVault",
+  "license": "MIT",
+  "scripts": {
+    "dev": "concurrently -k \"tsc -w -p tsconfig.json\" \"electron .\"",
+    "compile": "tsc -p tsconfig.json && copyfiles \"src/renderer/out/**/*\" dist/renderer",
+    "build": "npm run compile && electron-builder --win --x64",
+    "build:portable": "npm run compile && electron-builder --win --x64 --dir"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "copyfiles": "^2.4.1",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.5.0",
+    "chokidar": "^4.0.3",
+    "googleapis": "^144.0.0"
+  },
+  "build": {
+    "appId": "com.drivevault.app",
+    "productName": "DriveVault",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "DriveVault"
+    },
+    "portable": {
+      "artifactName": "DriveVault-${version}-portable.exe"
+    }
+  }
+}

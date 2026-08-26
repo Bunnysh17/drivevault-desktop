@@ -1,0 +1,110 @@
+{
+  "name": "drivevault-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "electron": "electron .",
+    "electron:dev": "cross-env NODE_ENV=development electron .",
+    "dist": "npm run build && electron-builder --win --x64",
+    "dist:portable": "npm run build && electron-builder --win --x64 --dir"
+  },
+  "description": "DriveVault – Google Drive Desktop Auto-Backup",
+  "author": "DriveVault",
+  "build": {
+    "appId": "com.drivevault.desktop",
+    "productName": "DriveVault",
+    "asar": true,
+    "directories": {
+      "output": "dist-installer"
+    },
+    "files": [
+      "electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": ".next/standalone",
+        "to": "standalone",
+        "filter": ["**/*"]
+      },
+      {
+        "from": ".next/static",
+        "to": "standalone/.next/static",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "public",
+        "to": "standalone/public",
+        "filter": ["**/*"]
+      },
+      {
+        "from": ".env",
+        "to": ".env"
+      }
+    ],
+    "win": {
+      "icon": "electron/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "DriveVault",
+      "artifactName": "DriveVault-Setup-${version}.exe"
+    },
+    "portable": {
+      "artifactName": "DriveVault-Portable-${version}.exe"
+    }
+  },
+  "dependencies": {
+    "chokidar": "^5.0.0",
+    "clsx": "^2.1.1",
+    "dotenv": "17.3.1",
+    "drizzle-orm": "0.45.2",
+    "framer-motion": "^13.1.1",
+    "googleapis": "^176.0.0",
+    "lucide-react": "^1.33.0",
+    "motion": "^13.1.1",
+    "next": "16.2.6",
+    "pg": "8.20.0",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "tailwind-merge": "^3.6.0",
+    "tsx": "^4.23.12",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.1.17",
+    "@types/node": "22.19.15",
+    "@types/pg": "8.18.0",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "cross-env": "^10.1.0",
+    "drizzle-kit": "0.31.10",
+    "electron": "^43.4.1",
+    "electron-builder": "^26.15.3",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.2.6",
+    "postcss": "8.5.8",
+    "tailwindcss": "4.1.17",
+    "typescript": "5.9.3"
+  }
+}

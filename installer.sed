@@ -1,0 +1,43 @@
+[Version]
+Class=IEXPRESS
+SEDVersion=3
+[Options]
+PackagePurpose=InstallApp
+ShowInstallProgramWindow=0
+HideExtractAnimation=0
+UseLongFileName=1
+InsideCompressed=0
+CAB_FixedSize=0
+CAB_ResvCodeSigning=0
+RebootMode=N
+InstallPrompt=
+DisplayLicense=
+FinishMessage=DriveVault installed successfully!
+TargetName=C:\Users\naveen\Desktop\DriveVault-Setup-1.0.0.exe
+FriendlyName=DriveVault Setup
+AppLaunched=cmd.exe /c start "" DriveVault.exe
+PostInstallCmd=<None>
+AdminQuietInstCmd=
+UserQuietInstCmd=
+SourceFiles=SourceFiles
+[SourceFiles]
+SourceFiles0=c:\Users\naveen\Downloads\build-drivevault-desktop-app\release\win-unpacked
+[SourceFiles0]
+%FILE0%=
+%FILE1%=
+%FILE2%=
+%FILE3%=
+%FILE4%=
+%FILE5%=
+%FILE6%=
+%FILE7%=
+%FILE8%=
+%FILE9%=
+%FILE10%=
+%FILE11%=
+%FILE12%=
+%FILE13%=
+%FILE14%=
+%FILE15%=
+%FILE16%=
+%FILE17%=

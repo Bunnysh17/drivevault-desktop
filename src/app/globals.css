@@ -1,0 +1,717 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Code", "Fira Code", monospace;
+  --color-vault-950: #05070d;
+  --color-vault-900: #080b14;
+  --color-vault-850: #0b0f1a;
+  --color-vault-800: #0f1524;
+  --color-vault-700: #161d30;
+  --color-vault-600: #1e2740;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+/* ═══════════════════════════════════════════
+   1. CYBER DARK THEME (Default)
+   ═══════════════════════════════════════════ */
+body,
+body[data-theme="dark"] {
+  background: #060911;
+  color: #e7ecf7;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  transition: background 500ms cubic-bezier(0.4, 0, 0.2, 1),
+              color 300ms ease;
+}
+
+body::before,
+body[data-theme="dark"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 1300px 700px at 15% -10%, rgba(99, 102, 241, 0.28), transparent 60%),
+    radial-gradient(ellipse 1000px 600px at 100% 0%, rgba(14, 165, 233, 0.22), transparent 55%),
+    radial-gradient(ellipse 800px 500px at 50% 100%, rgba(168, 85, 247, 0.16), transparent 50%);
+  animation: aurora-drift 16s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+/* ═══════════════ ANIMATED STARFIELD (Dark default + Neon) ═══════════════ */
+body::after,
+body[data-theme="dark"]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    radial-gradient(1.2px 1.2px at 18% 14%, rgba(255,255,255,0.25), transparent),
+    radial-gradient(1px 1px at 42% 35%, rgba(168,170,255,0.2), transparent),
+    radial-gradient(1.5px 1.5px at 67% 22%, rgba(56,189,248,0.2), transparent),
+    radial-gradient(1px 1px at 85% 68%, rgba(192,132,252,0.15), transparent),
+    radial-gradient(1.3px 1.3px at 27% 78%, rgba(255,255,255,0.18), transparent),
+    radial-gradient(0.8px 0.8px at 53% 57%, rgba(99,102,241,0.2), transparent),
+    radial-gradient(1px 1px at 75% 89%, rgba(255,255,255,0.12), transparent),
+    radial-gradient(1.4px 1.4px at 12% 52%, rgba(56,189,248,0.15), transparent),
+    radial-gradient(0.9px 0.9px at 91% 12%, rgba(255,255,255,0.2), transparent),
+    radial-gradient(1.1px 1.1px at 35% 93%, rgba(168,85,247,0.18), transparent),
+    radial-gradient(0.7px 0.7px at 58% 7%, rgba(255,255,255,0.15), transparent),
+    radial-gradient(1.2px 1.2px at 6% 88%, rgba(99,102,241,0.15), transparent),
+    radial-gradient(1px 1px at 80% 40%, rgba(255,255,255,0.1), transparent),
+    radial-gradient(1.3px 1.3px at 47% 72%, rgba(56,189,248,0.12), transparent);
+  animation: starfield-twinkle 8s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes starfield-twinkle {
+  0% { opacity: 0.7; transform: scale(1); }
+  25% { opacity: 1; }
+  50% { opacity: 0.5; transform: scale(1.01); }
+  75% { opacity: 0.9; }
+  100% { opacity: 0.7; transform: scale(1); }
+}
+
+/* ═══════════════ NOISE TEXTURE OVERLAY ═══════════════ */
+body > #__next::before,
+body > div:first-child::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.018;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ═══════════════════════════════════════════
+   2. CELESTIAL ANGEL THEME (Anime Wallpaper)
+   ═══════════════════════════════════════════ */
+body[data-theme="celestial"] {
+  background: #0d0614 url('/themes/celestial_angel.jpg') no-repeat center center fixed !important;
+  background-size: cover !important;
+  color: #fae8ff !important;
+}
+body[data-theme="celestial"]::after { display: none !important; }
+
+body[data-theme="celestial"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 1200px 700px at 50% 0%, rgba(244, 114, 182, 0.28), transparent 60%),
+    radial-gradient(ellipse 900px 500px at 100% 100%, rgba(251, 191, 36, 0.15), transparent 50%),
+    linear-gradient(180deg, rgba(13, 6, 20, 0.82) 0%, rgba(13, 6, 20, 0.9) 100%) !important;
+  backdrop-filter: blur(2px);
+}
+
+body[data-theme="celestial"] .glass-card,
+body[data-theme="celestial"] .theme-surface {
+  background-color: rgba(26, 12, 38, 0.76) !important;
+  border-color: rgba(244, 114, 182, 0.25) !important;
+  box-shadow:
+    0 1px 0 0 rgba(244, 114, 182, 0.15) inset,
+    0 20px 50px -20px rgba(0, 0, 0, 0.88),
+    0 0 30px -10px rgba(236, 72, 153, 0.2) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+body[data-theme="celestial"] .glass-card:hover {
+  border-color: rgba(244, 114, 182, 0.45) !important;
+  box-shadow:
+    0 1px 0 0 rgba(244, 114, 182, 0.25) inset,
+    0 25px 60px -20px rgba(0, 0, 0, 0.95),
+    0 0 40px -5px rgba(244, 114, 182, 0.3) !important;
+}
+
+body[data-theme="celestial"] .sidebar-glass {
+  background: rgba(18, 8, 28, 0.85) !important;
+  border-color: rgba(244, 114, 182, 0.2) !important;
+  backdrop-filter: blur(24px) !important;
+}
+
+body[data-theme="celestial"] .header-glass {
+  background: rgba(18, 8, 28, 0.94) !important;
+  border-color: rgba(244, 114, 182, 0.2) !important;
+  backdrop-filter: blur(28px) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.85) !important;
+}
+
+body[data-theme="celestial"] .gradient-text {
+  background: linear-gradient(135deg, #f472b6 0%, #fbcfe8 45%, #fde047 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* ═══════════════════════════════════════════
+   3. EMERALD DUSK DRAGON THEME (Anime Wallpaper)
+   ═══════════════════════════════════════════ */
+body[data-theme="emerald"] {
+  background: #051410 url('/themes/emerald_dusk.jpg') no-repeat center center fixed !important;
+  background-size: cover !important;
+  color: #ecfdf5 !important;
+}
+body[data-theme="emerald"]::after { display: none !important; }
+
+body[data-theme="emerald"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 1200px 700px at 15% -10%, rgba(16, 185, 129, 0.3), transparent 60%),
+    radial-gradient(ellipse 900px 500px at 95% 5%, rgba(6, 182, 212, 0.22), transparent 50%),
+    linear-gradient(180deg, rgba(5, 20, 16, 0.82) 0%, rgba(5, 20, 16, 0.92) 100%) !important;
+  backdrop-filter: blur(2px);
+}
+
+body[data-theme="emerald"] .glass-card,
+body[data-theme="emerald"] .theme-surface {
+  background-color: rgba(10, 32, 26, 0.78) !important;
+  border-color: rgba(52, 211, 153, 0.22) !important;
+  box-shadow:
+    0 1px 0 0 rgba(52, 211, 153, 0.12) inset,
+    0 20px 50px -20px rgba(0, 0, 0, 0.88),
+    0 0 30px -10px rgba(16, 185, 129, 0.18) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+body[data-theme="emerald"] .glass-card:hover {
+  border-color: rgba(52, 211, 153, 0.45) !important;
+  box-shadow:
+    0 1px 0 0 rgba(52, 211, 153, 0.22) inset,
+    0 25px 60px -20px rgba(0, 0, 0, 0.95),
+    0 0 40px -5px rgba(52, 211, 153, 0.3) !important;
+}
+
+body[data-theme="emerald"] .sidebar-glass {
+  background: rgba(7, 24, 19, 0.85) !important;
+  border-color: rgba(52, 211, 153, 0.18) !important;
+  backdrop-filter: blur(24px) !important;
+}
+body[data-theme="emerald"] .header-glass {
+  background: rgba(7, 24, 19, 0.94) !important;
+  border-color: rgba(52, 211, 153, 0.18) !important;
+  backdrop-filter: blur(28px) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.85) !important;
+}
+
+body[data-theme="emerald"] .gradient-text {
+  background: linear-gradient(135deg, #34d399 0%, #6ee7b7 45%, #38bdf8 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* ═══════════════════════════════════════════
+   4. SERENE BUTTERFLY THEME (Anime Wallpaper)
+   ═══════════════════════════════════════════ */
+body[data-theme="butterfly"] {
+  background: #06121e url('/themes/serene_butterfly.jpg') no-repeat center center fixed !important;
+  background-size: cover !important;
+  color: #f0f9ff !important;
+}
+body[data-theme="butterfly"]::after { display: none !important; }
+
+body[data-theme="butterfly"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 1200px 700px at 50% 0%, rgba(56, 189, 248, 0.28), transparent 60%),
+    radial-gradient(ellipse 900px 500px at 100% 100%, rgba(167, 139, 250, 0.2), transparent 50%),
+    linear-gradient(180deg, rgba(6, 18, 30, 0.8) 0%, rgba(6, 18, 30, 0.9) 100%) !important;
+  backdrop-filter: blur(2px);
+}
+
+body[data-theme="butterfly"] .glass-card,
+body[data-theme="butterfly"] .theme-surface {
+  background-color: rgba(12, 28, 46, 0.78) !important;
+  border-color: rgba(56, 189, 248, 0.25) !important;
+  box-shadow:
+    0 1px 0 0 rgba(56, 189, 248, 0.12) inset,
+    0 20px 50px -20px rgba(0, 0, 0, 0.88),
+    0 0 30px -10px rgba(56, 189, 248, 0.18) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+body[data-theme="butterfly"] .glass-card:hover {
+  border-color: rgba(56, 189, 248, 0.45) !important;
+  box-shadow:
+    0 1px 0 0 rgba(56, 189, 248, 0.22) inset,
+    0 25px 60px -20px rgba(0, 0, 0, 0.95),
+    0 0 40px -5px rgba(56, 189, 248, 0.3) !important;
+}
+
+body[data-theme="butterfly"] .sidebar-glass {
+  background: rgba(8, 22, 36, 0.85) !important;
+  border-color: rgba(56, 189, 248, 0.2) !important;
+  backdrop-filter: blur(24px) !important;
+}
+body[data-theme="butterfly"] .header-glass {
+  background: rgba(8, 22, 36, 0.94) !important;
+  border-color: rgba(56, 189, 248, 0.2) !important;
+  backdrop-filter: blur(28px) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.85) !important;
+}
+
+body[data-theme="butterfly"] .gradient-text {
+  background: linear-gradient(135deg, #38bdf8 0%, #bae6fd 45%, #a78bfa 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* ═══════════════════════════════════════════
+   5. STARLIGHT FIREFLY THEME (Anime Wallpaper)
+   ═══════════════════════════════════════════ */
+body[data-theme="firefly"] {
+  background: #0f0718 url('/themes/starlight_firefly.jpg') no-repeat center center fixed !important;
+  background-size: cover !important;
+  color: #faf5ff !important;
+}
+body[data-theme="firefly"]::after { display: none !important; }
+
+body[data-theme="firefly"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 1200px 700px at 20% -10%, rgba(192, 132, 252, 0.35), transparent 60%),
+    radial-gradient(ellipse 900px 500px at 90% 10%, rgba(251, 146, 60, 0.22), transparent 50%),
+    linear-gradient(180deg, rgba(15, 7, 24, 0.82) 0%, rgba(15, 7, 24, 0.92) 100%) !important;
+  backdrop-filter: blur(2px);
+}
+
+body[data-theme="firefly"] .glass-card,
+body[data-theme="firefly"] .theme-surface {
+  background-color: rgba(28, 14, 44, 0.78) !important;
+  border-color: rgba(192, 132, 252, 0.25) !important;
+  box-shadow:
+    0 1px 0 0 rgba(192, 132, 252, 0.12) inset,
+    0 20px 50px -20px rgba(0, 0, 0, 0.88),
+    0 0 30px -10px rgba(168, 85, 247, 0.2) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+body[data-theme="firefly"] .glass-card:hover {
+  border-color: rgba(192, 132, 252, 0.45) !important;
+  box-shadow:
+    0 1px 0 0 rgba(192, 132, 252, 0.22) inset,
+    0 25px 60px -20px rgba(0, 0, 0, 0.95),
+    0 0 40px -5px rgba(192, 132, 252, 0.3) !important;
+}
+
+body[data-theme="firefly"] .sidebar-glass {
+  background: rgba(20, 10, 32, 0.85) !important;
+  border-color: rgba(192, 132, 252, 0.2) !important;
+  backdrop-filter: blur(24px) !important;
+}
+body[data-theme="firefly"] .header-glass {
+  background: rgba(20, 10, 32, 0.94) !important;
+  border-color: rgba(192, 132, 252, 0.2) !important;
+  backdrop-filter: blur(28px) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.85) !important;
+}
+
+body[data-theme="firefly"] .gradient-text {
+  background: linear-gradient(135deg, #c084fc 0%, #f472b6 45%, #fbbf24 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* ═══════════════════════════════════════════
+   6. NEON CYBERPUNK THEME
+   ═══════════════════════════════════════════ */
+body[data-theme="neon"] {
+  background: #07030e !important;
+  color: #f5edff !important;
+}
+
+body[data-theme="neon"]::before {
+  background:
+    radial-gradient(ellipse 1200px 650px at 15% -10%, rgba(168, 85, 247, 0.4), transparent 55%),
+    radial-gradient(ellipse 1000px 600px at 95% 5%, rgba(236, 72, 153, 0.35), transparent 50%),
+    radial-gradient(ellipse 850px 500px at 50% 100%, rgba(6, 182, 212, 0.25), transparent 50%) !important;
+  animation: aurora-drift 10s ease-in-out infinite alternate;
+}
+
+body[data-theme="neon"] .glass-card,
+body[data-theme="neon"] .theme-surface {
+  background-color: rgba(18, 9, 32, 0.75) !important;
+  border-color: rgba(192, 132, 252, 0.22) !important;
+  box-shadow:
+    0 1px 0 0 rgba(236, 72, 153, 0.1) inset,
+    0 20px 50px -20px rgba(0, 0, 0, 0.85),
+    0 0 25px -10px rgba(168, 85, 247, 0.15) !important;
+}
+
+body[data-theme="neon"] .glass-card:hover {
+  border-color: rgba(236, 72, 153, 0.4) !important;
+  box-shadow:
+    0 1px 0 0 rgba(236, 72, 153, 0.2) inset,
+    0 25px 60px -20px rgba(0, 0, 0, 0.9),
+    0 0 35px -5px rgba(236, 72, 153, 0.25) !important;
+}
+
+body[data-theme="neon"] .sidebar-glass {
+  background: rgba(10, 4, 18, 0.85) !important;
+  border-color: rgba(168, 85, 247, 0.18) !important;
+}
+
+body[data-theme="neon"] .header-glass {
+  background: rgba(10, 4, 18, 0.94) !important;
+  border-color: rgba(168, 85, 247, 0.18) !important;
+  backdrop-filter: blur(28px) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.85) !important;
+}
+
+body[data-theme="neon"] .gradient-text {
+  background: linear-gradient(135deg, #c084fc 0%, #f472b6 45%, #38bdf8 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+body[data-theme="neon"] ::selection {
+  background: rgba(236, 72, 153, 0.4);
+  color: #fff;
+}
+
+/* ═══════════════════════════════════════════
+   7. DEEP OCEAN THEME
+   ═══════════════════════════════════════════ */
+body[data-theme="ocean"] {
+  background: #04121d !important;
+  color: #e0f7ff !important;
+}
+body[data-theme="ocean"]::after { display: none !important; }
+
+body[data-theme="ocean"]::before {
+  background:
+    radial-gradient(ellipse 1100px 620px at 8% -12%, rgba(6, 182, 212, 0.32), transparent 58%),
+    radial-gradient(ellipse 900px 520px at 100% 8%, rgba(37, 99, 235, 0.25), transparent 56%),
+    radial-gradient(ellipse 650px 400px at 60% 100%, rgba(20, 184, 166, 0.15), transparent 50%) !important;
+}
+
+body[data-theme="ocean"] .theme-surface,
+body[data-theme="ocean"] .glass-card {
+  background-color: rgba(4, 22, 36, 0.8) !important;
+  border-color: rgba(56, 189, 248, 0.2) !important;
+  box-shadow:
+    0 1px 0 0 rgba(56, 189, 248, 0.1) inset,
+    0 20px 50px -20px rgba(0, 0, 0, 0.85),
+    0 0 25px -10px rgba(6, 182, 212, 0.15) !important;
+}
+
+body[data-theme="ocean"] .sidebar-glass {
+  background: rgba(3, 16, 26, 0.85) !important;
+  border-color: rgba(56, 189, 248, 0.15) !important;
+}
+
+body[data-theme="ocean"] .header-glass {
+  background: rgba(3, 16, 26, 0.94) !important;
+  border-color: rgba(56, 189, 248, 0.15) !important;
+  backdrop-filter: blur(28px) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.85) !important;
+}
+
+/* ═══════════════════════════════════════════
+   4. EMERALD FOREST THEME
+   ═══════════════════════════════════════════ */
+body[data-theme="forest"] {
+  background: #04160e !important;
+  color: #e7fff3 !important;
+}
+body[data-theme="forest"]::after { display: none !important; }
+
+body[data-theme="forest"]::before {
+  background:
+    radial-gradient(ellipse 1100px 620px at 10% -12%, rgba(16, 185, 129, 0.28), transparent 58%),
+    radial-gradient(ellipse 900px 520px at 100% 4%, rgba(132, 204, 22, 0.18), transparent 56%),
+    radial-gradient(ellipse 650px 400px at 40% 100%, rgba(34, 197, 94, 0.12), transparent 50%) !important;
+}
+
+body[data-theme="forest"] .theme-surface,
+body[data-theme="forest"] .glass-card {
+  background-color: rgba(4, 26, 16, 0.8) !important;
+  border-color: rgba(74, 222, 128, 0.2) !important;
+}
+
+body[data-theme="forest"] .sidebar-glass {
+  background: rgba(3, 18, 11, 0.6) !important;
+  border-color: rgba(74, 222, 128, 0.15) !important;
+}
+
+body[data-theme="forest"] .header-glass {
+  background: rgba(3, 18, 11, 0.65) !important;
+  border-color: rgba(74, 222, 128, 0.15) !important;
+}
+
+/* ═══════════════════════════════════════════
+   5. CRYSTAL LIGHT THEME
+   ═══════════════════════════════════════════ */
+body[data-theme="light"] {
+  background: #f5f7fc !important;
+  color: #0f172a !important;
+}
+body[data-theme="light"]::after { display: none !important; }
+
+body[data-theme="light"]::before {
+  background:
+    radial-gradient(ellipse 1200px 600px at 12% -10%, rgba(99, 102, 241, 0.12), transparent 60%),
+    radial-gradient(ellipse 900px 500px at 100% 0%, rgba(14, 165, 233, 0.1), transparent 55%),
+    radial-gradient(ellipse 600px 400px at 50% 100%, rgba(236, 72, 153, 0.08), transparent 50%) !important;
+}
+
+body[data-theme="light"] .theme-surface {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(100, 116, 139, 0.2) !important;
+  color: #172033 !important;
+}
+
+body[data-theme="light"] .glass-card {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-color: rgba(100, 116, 139, 0.2) !important;
+  box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.08),
+              0 1px 0 0 rgba(255,255,255,0.9) inset !important;
+}
+
+body[data-theme="light"] select,
+body[data-theme="light"] select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+body[data-theme="light"] .text-white { color: #172033 !important; }
+body[data-theme="light"] .text-white\/90 { color: rgba(23, 32, 51, 0.9) !important; }
+body[data-theme="light"] .text-white\/85 { color: rgba(23, 32, 51, 0.85) !important; }
+body[data-theme="light"] .text-white\/80 { color: rgba(23, 32, 51, 0.8) !important; }
+body[data-theme="light"] .text-white\/70,
+body[data-theme="light"] .text-white\/60,
+body[data-theme="light"] .text-white\/55,
+body[data-theme="light"] .text-white\/50,
+body[data-theme="light"] .text-white\/45,
+body[data-theme="light"] .text-white\/40,
+body[data-theme="light"] .text-white\/35,
+body[data-theme="light"] .text-white\/30 {
+  color: rgba(51, 65, 85, 0.8) !important;
+}
+
+body[data-theme="light"] .sidebar-glass {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border-color: rgba(100, 116, 139, 0.18) !important;
+}
+
+body[data-theme="light"] .header-glass {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-color: rgba(100, 116, 139, 0.15) !important;
+}
+
+/* ═══════════════════════════════════════════
+   CORE GLASSMORPHISM SURFACES (Enhanced)
+   ═══════════════════════════════════════════ */
+.glass-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(28px) saturate(1.4);
+  -webkit-backdrop-filter: blur(28px) saturate(1.4);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.05) inset,
+    0 20px 50px -20px rgba(0, 0, 0, 0.75),
+    0 0 0 0 rgba(99,102,241,0);
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 300ms cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 250ms ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.08) inset,
+    0 28px 65px -20px rgba(0, 0, 0, 0.85),
+    0 0 30px -8px rgba(99,102,241,0.12);
+}
+
+.sidebar-glass {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(36px) saturate(1.5);
+  -webkit-backdrop-filter: blur(36px) saturate(1.5);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.header-glass {
+  background: rgba(6, 9, 17, 0.94);
+  backdrop-filter: blur(28px) saturate(1.4);
+  -webkit-backdrop-filter: blur(28px) saturate(1.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.85);
+}
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS & EFFECTS (Extended)
+   ═══════════════════════════════════════════ */
+@keyframes aurora-drift {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  50% { transform: translate(25px, -15px) scale(1.04); opacity: 0.9; }
+  100% { transform: translate(-20px, 15px) scale(0.98); opacity: 1; }
+}
+
+@keyframes progress-shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.25); }
+}
+.status-pulse {
+  animation: status-pulse 2s ease-in-out infinite;
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(0.5deg); }
+}
+.float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+@keyframes glow-breathe {
+  0%, 100% { filter: drop-shadow(0 0 15px rgba(99,102,241,0.3)); }
+  50% { filter: drop-shadow(0 0 30px rgba(168,85,247,0.6)); }
+}
+.glow-breathe {
+  animation: glow-breathe 4s ease-in-out infinite;
+}
+
+@keyframes shimmer-beam {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+.shimmer-beam {
+  animation: shimmer-beam 3s ease-in-out infinite;
+}
+
+@keyframes gradient-border-spin {
+  0% { --border-angle: 0deg; }
+  100% { --border-angle: 360deg; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px -8px rgba(99,102,241,0.3), 0 0 60px -15px rgba(168,85,247,0.15); }
+  50% { box-shadow: 0 0 30px -5px rgba(99,102,241,0.5), 0 0 80px -10px rgba(168,85,247,0.3); }
+}
+
+@keyframes ripple-spread {
+  0% { transform: scale(0); opacity: 0.4; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #818cf8 0%, #c084fc 40%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.vault-drag {
+  -webkit-app-region: drag;
+}
+
+/* ═══════════════════════════════════════════
+   ANIMATED GRADIENT BORDER (for active sidebar)
+   ═══════════════════════════════════════════ */
+.nav-active-glow {
+  position: relative;
+}
+.nav-active-glow::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(99,102,241,0.4), rgba(168,85,247,0.3), rgba(56,189,248,0.3));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════
+   PREMIUM SCROLLBAR (Theme-aware)
+   ═══════════════════════════════════════════ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(99,102,241,0.3), rgba(168,85,247,0.25));
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background-clip: content-box;
+  transition: background 200ms ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(99,102,241,0.5), rgba(168,85,247,0.45));
+  background-clip: content-box;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::selection {
+  background: rgba(99, 102, 241, 0.35);
+  color: #fff;
+}
+
+/* ═══════════════════════════════════════════
+   BUTTON CLICK RIPPLE EFFECT
+   ═══════════════════════════════════════════ */
+button {
+  position: relative;
+  overflow: hidden;
+}
+button .ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  pointer-events: none;
+  animation: ripple-spread 0.6s linear forwards;
+}
+
+/* ═══════════════════════════════════════════
+   FOCUS RING ACCESSIBILITY (Premium)
+   ═══════════════════════════════════════════ */
+:focus-visible {
+  outline: 2px solid rgba(99,102,241,0.6);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ═══════════════════════════════════════════
+   TOOLTIP MICRO-ANIMATIONS
+   ═══════════════════════════════════════════ */
+[title] {
+  position: relative;
+}
+
