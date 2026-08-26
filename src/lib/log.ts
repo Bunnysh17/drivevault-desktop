@@ -131,8 +131,8 @@ export function pushToast(t: Omit<ToastDTO, "id" | "createdAt">) {
 
 export function getToasts(): ToastDTO[] {
   const now = Date.now();
-  // Filter out any stale toast older than 12 seconds so old toasts never replay on refresh
-  const list = toastList().filter((t) => now - new Date(t.createdAt).getTime() < 12_000);
+  // Filter out any stale toast older than 4 seconds so old toasts never replay on refresh
+  const list = toastList().filter((t) => now - new Date(t.createdAt).getTime() < 4_000);
   g.__drivevaultToasts = list;
   return list;
 }

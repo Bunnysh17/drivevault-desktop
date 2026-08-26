@@ -759,7 +759,7 @@ async function runItem(queueId: number) {
         status: "retrying",
         errorCode: code,
         filePath: item.localPath,
-        notify: settings.notifyOnFail && settings.notifications && attempts === 1,
+        notify: false,
       });
       return;
     }
