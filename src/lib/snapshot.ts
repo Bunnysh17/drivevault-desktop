@@ -321,7 +321,7 @@ export async function buildSnapshot(): Promise<DashboardSnapshot> {
     .select()
     .from(uploadQueue)
     .orderBy(desc(uploadQueue.createdAt))
-    .limit(120);
+    .limit(10000);
 
   const queue = queueRows.map((r) => mapQueueItem(r));
   const activeRows = queueRows.filter((r) => r.status === "uploading" || r.status === "preparing");
@@ -348,7 +348,7 @@ export async function buildSnapshot(): Promise<DashboardSnapshot> {
       gamingDetected: engineStatus().gamingModeActive,
       matchedGames: engineStatus().matchedGames,
       activeUploads: engineStatus().activeUploads,
-      queuedCount: queue.filter((q) => ["waiting", "retrying", "preparing", "uploading", "paused"].includes(q.status)).length,
+      queuedCount: stats.pendingCount,
     },
     local: {
       totalBytes: disk.totalBytes,

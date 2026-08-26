@@ -266,14 +266,14 @@ async function handleNewFile(folder: MonitoredFolder, filePath: string) {
 }
 
 /** "Upload Existing Files": scans a folder and queues everything already in it. */
-export async function scanFolderExisting(folderId: number, limit = 500) {
+export async function scanFolderExisting(folderId: number, limit = 100000) {
   const rows = await db.select().from(monitoredFolders).where(eq(monitoredFolders.id, folderId));
   const folder = rows[0];
   if (!folder) throw new Error("Folder not found.");
   let queued = 0;
 
   const walk = async (dir: string, depth: number) => {
-    if (depth > 12 || queued >= limit) return;
+    if (depth > 25 || queued >= limit) return;
     try {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
       for (const entry of entries) {

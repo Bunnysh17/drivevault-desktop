@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const limit = Math.min(Number(url.searchParams.get("limit") ?? 100) || 100, 300);
+  const limit = Math.min(Number(url.searchParams.get("limit") ?? 500) || 500, 10000);
   const status = url.searchParams.get("status");
   const rows = status
     ? await db.select().from(uploadQueue).where(eq(uploadQueue.status, status)).orderBy(desc(uploadQueue.createdAt)).limit(limit)
@@ -20,7 +20,7 @@ export async function GET(request: Request) {
 
 const schema = z.object({
   action: z.enum(["pause", "resume", "cancel", "retry", "retry-all", "pause-all", "resume-all", "clear-completed", "cancel-all", "clear-all"]),
-  ids: z.array(z.number().int().positive()).max(500).optional(),
+  ids: z.array(z.number().int().positive()).max(10000).optional(),
 });
 
 export async function POST(request: Request) {
