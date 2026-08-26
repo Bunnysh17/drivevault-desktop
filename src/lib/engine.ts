@@ -154,7 +154,7 @@ function folderPassesFilters(folder: MonitoredFolder, filePath: string, size: nu
 export async function enqueueFile(
   folder: MonitoredFolder,
   filePath: string,
-  opts: { skipStability?: boolean } = {},
+  opts: { skipStability?: boolean; existingRows?: Array<{ id: number; localPath: string; fileSize: number; fileHash: string | null; status: string; driveFileId: string | null }> } = {},
 ): Promise<{ queued: boolean; reason: string; queueId?: number }> {
   const settings = await getSettings();
   const normalized = normalizePath(filePath);
@@ -186,7 +186,7 @@ export async function enqueueFile(
   const filter = folderPassesFilters(folder, normalized, stat.size);
   if (!filter.ok) return { queued: false, reason: `Skipped (${filter.reason}).` };
 
-  const existingRows = await db
+  const existingRows = opts.existingRows ?? (await db
     .select({
       id: uploadQueue.id,
       localPath: uploadQueue.localPath,
@@ -195,7 +195,7 @@ export async function enqueueFile(
       status: uploadQueue.status,
       driveFileId: uploadQueue.driveFileId,
     })
-    .from(uploadQueue);
+    .from(uploadQueue));
 
   const hash =
     settings.hashBeforeUpload || existingRows.length < 500
@@ -272,6 +272,17 @@ export async function scanFolderExisting(folderId: number, limit = 100000) {
   if (!folder) throw new Error("Folder not found.");
   let queued = 0;
 
+  const existingRows = await db
+    .select({
+      id: uploadQueue.id,
+      localPath: uploadQueue.localPath,
+      fileSize: uploadQueue.fileSize,
+      fileHash: uploadQueue.fileHash,
+      status: uploadQueue.status,
+      driveFileId: uploadQueue.driveFileId,
+    })
+    .from(uploadQueue);
+
   const walk = async (dir: string, depth: number) => {
     if (depth > 25 || queued >= limit) return;
     try {
@@ -286,7 +297,7 @@ export async function scanFolderExisting(folderId: number, limit = 100000) {
         if (!entry.isFile()) continue;
         const filter = folderPassesFilters(folder, full, fs.statSync(full).size);
         if (!filter.ok) continue;
-        const r = await enqueueFile({ ...folder, autoUpload: true }, full, { skipStability: true });
+        const r = await enqueueFile({ ...folder, autoUpload: true }, full, { skipStability: true, existingRows });
         if (r.queued) queued += 1;
       }
     } catch {
