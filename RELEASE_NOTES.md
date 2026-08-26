@@ -1,6 +1,15 @@
-# 🚀 DriveVault v1.0.0 — Official Release Notes
+# 🚀 DriveVault Release Notes
 
-DriveVault is an intelligent desktop application that auto-backs up your local recordings and files to Google Drive with byte-accurate verification, zero FPS drop gaming mode, and automated storage reclamation.
+## 🌟 DriveVault v1.1.0 — High-Capacity Queue, Auto-Healing & Remote Deletion Sync
+
+### 🆕 What's New in v1.1.0
+- 🗑️ **Unbind All Folders**: Added a one-click "Unbind All" action with safety confirmation dialog on the Auto-Backup dashboard to detach all watched directories simultaneously without altering local files.
+- ⚡ **Manual Backup Controls**: Added "Start Backup (Sync All)" and "Pause / Resume Backup" buttons in the top header toolbar, plus individual "Start Backup" buttons on folder cards.
+- 📈 **100,000+ Files Queue Capacity**: Removed the 120-item limitation. The folder scanner and queue telemetry now support up to 100,000 files in large game clip and photography libraries with prefetched query optimization.
+- 🔄 **Live Remote Google Drive Deletion Sync**: Deleting files on Google Drive (via web browser or mobile app) automatically cleans up database records and decrements the Total Uploaded counter.
+- 🛡️ **HTTP 404 Parent Auto-Healing**: Resilient folder chain reconciliation automatically detects missing or trashed parent folders in Google Drive, clears stale caches, and recreates valid folder structures seamlessly.
+- 🔕 **Notification Spam Silencing**: Muted background retry toast popups and enforced a 4-second stale notification expiration to prevent alert replaying on application launch.
+- 📦 **100% Standalone Desktop Installer**: Embedded runtime eliminates any requirement for external Node.js or Python installations on user machines.
 
 ---
 
