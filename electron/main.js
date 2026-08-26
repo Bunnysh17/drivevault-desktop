@@ -18,10 +18,6 @@ if (fs.existsSync(rootEnvPath)) {
   dotenv.config();
 }
 
-if (!process.env.DATABASE_URL) {
-  process.env.DATABASE_URL = "postgresql://neondb_owner:npg_3HinZIBNpVh8@ep-autumn-field-az8v0i43.c-3.ap-southeast-1.aws.neon.tech/neondb?sslmode=require";
-}
-
 process.env.NODE_ENV = "production";
 process.env.PORT = "39821";
 process.env.HOSTNAME = "127.0.0.1";
