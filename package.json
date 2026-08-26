@@ -5,7 +5,7 @@
   "main": "electron/main.js",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node scripts/copy-standalone.js",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -34,13 +34,13 @@
         "filter": ["**/*"]
       },
       {
-        "from": ".next/static",
-        "to": "standalone/.next/static",
+        "from": ".next/standalone/node_modules",
+        "to": "standalone/node_modules",
         "filter": ["**/*"]
       },
       {
-        "from": "public",
-        "to": "standalone/public",
+        "from": ".next/standalone/.next",
+        "to": "standalone/.next",
         "filter": ["**/*"]
       },
       {

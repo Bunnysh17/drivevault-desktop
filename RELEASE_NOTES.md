@@ -32,9 +32,9 @@
 
 | Asset Name | Type | Size | Description |
 | :--- | :--- | :--- | :--- |
-| **`DriveVault-Setup-1.0.0.exe`** | NSIS Installer | ~178 MB | Complete Windows installer with Desktop shortcut, Start Menu shortcut, and auto-updater support. |
-| **`DriveVault-Portable-1.0.0.exe`** | Portable Executable | ~177 MB | Standalone portable executable — run instantly without installing. |
-| **`DriveVault.exe`** | Win32 Launcher | ~177 KB | Lightweight native C# launcher with low CPU priority enforcement. |
+| **`DriveVault-Setup-1.1.0.exe`** | NSIS Installer | ~173 MB | Complete Windows installer with Desktop shortcut, Start Menu shortcut, and embedded runtime. |
+| **`DriveVault-Portable-1.1.0.exe`** | Portable Executable | ~172 MB | Standalone portable executable — run instantly without installing. |
+| **`DriveVault.exe`** | Win32 Launcher | ~177 KB | Lightweight native launcher with low CPU priority enforcement. |
 | **Source code (zip / tar.gz)** | Source Archive | — | Complete TypeScript, Next.js, and Electron source code. |
 
 ---

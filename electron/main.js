@@ -111,17 +111,11 @@ function logDebug(msg, err) {
 async function ensureServerRunning() {
   logDebug("[DriveVault] Starting ensureServerRunning...");
 
-  // 1. Check if server is already running on standard ports (3000, 39821, or configured PORT)
-  const candidatePorts = [PORT, 3000, 39821].filter((v, i, a) => a.indexOf(v) === i);
-  for (const candidatePort of candidatePorts) {
-    const candidateUrl = `http://${HOST}:${candidatePort}`;
-    const isReady = await checkServerReady(candidateUrl);
-    if (isReady) {
-      PORT = candidatePort;
-      APP_URL = candidateUrl;
-      logDebug(`[DriveVault] Server already active on ${APP_URL}`);
-      return;
-    }
+  // 1. Check if server is already running on our designated port
+  const isReady = await checkServerReady(APP_URL);
+  if (isReady) {
+    logDebug(`[DriveVault] Server already active on ${APP_URL}`);
+    return;
   }
 
   const projectDir = getProjectDir();
@@ -145,8 +139,14 @@ async function ensureServerRunning() {
       const { spawn } = require("child_process");
       const standaloneDir = path.dirname(standaloneServer);
 
-      // Load .env into the child environment
-      const envForChild = { ...process.env, PORT: String(PORT), HOSTNAME: HOST, ELECTRON_RUN_AS_NODE: "1" };
+      const nodeModulesDir = path.join(standaloneDir, "node_modules");
+      const envForChild = {
+        ...process.env,
+        PORT: String(PORT),
+        HOSTNAME: HOST,
+        ELECTRON_RUN_AS_NODE: "1",
+        NODE_PATH: nodeModulesDir,
+      };
       const envFilePaths = [
         path.join(process.resourcesPath || "", ".env"),
         path.join(standaloneDir, ".env"),
@@ -263,6 +263,10 @@ function createMainWindow() {
       sandbox: false,
     },
   });
+
+  try {
+    mainWindow.webContents.session.clearCache();
+  } catch (e) {}
 
   mainWindow.loadURL(APP_URL);
 
