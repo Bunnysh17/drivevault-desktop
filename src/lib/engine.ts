@@ -3,7 +3,7 @@ import path from "node:path";
 import chokidar, { type FSWatcher } from "chokidar";
 import { and, desc, eq, inArray, isNull, or, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { monitoredFolders, protectedPaths, uploadQueue, uploadedFiles, type MonitoredFolder } from "@/db/schema";
+import { monitoredFolders, protectedPaths, uploadQueue, uploadedFiles, uploadSessions, type MonitoredFolder } from "@/db/schema";
 import { backoffDelay, findDuplicate } from "./dedupe";
 import {
   detectGameRunning,
@@ -710,12 +710,9 @@ async function runItem(queueId: number) {
       return;
     }
 
-    // Self-healing: if the parent folder was deleted/trashed on Drive, clear the
-    // cached folder IDs and reset this item to "waiting" so the next attempt
-    // re-resolves the full folder chain from scratch instead of retrying with
-    // the same dead parent ID.
-    if (code === "PARENT_NOT_FOUND" || code === "NOT_FOUND") {
+    if (code === "PARENT_NOT_FOUND" || code === "NOT_FOUND" || /404|File not found|notFound/i.test(d.message) || /404|File not found|notFound/i.test(String(err))) {
       await clearFolderCache();
+      await db.delete(uploadSessions).where(eq(uploadSessions.queueId, queueId));
       await db
         .update(uploadQueue)
         .set({

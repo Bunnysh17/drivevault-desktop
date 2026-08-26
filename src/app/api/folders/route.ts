@@ -182,7 +182,8 @@ export async function PATCH(request: Request) {
 
   if (parsed.data.action === "scan") {
     await scanFolderExisting(folder.id);
-    return Response.json({ ok: true, message: `Scanning ${folder.path} for existing files…` });
+    void processQueue();
+    return Response.json({ ok: true, message: `Scanning ${folder.path} and starting backup…` });
   }
 
   const c = parsed.data.changes ?? {};
@@ -208,6 +209,15 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   const url = new URL(request.url);
+  const unbindAll = url.searchParams.get("all") === "1" || url.searchParams.get("id") === "all";
+
+  if (unbindAll) {
+    await db.delete(monitoredFolders);
+    await refreshWatchers();
+    await logActivity("folder", "Unbound all monitored folders.", { status: "info", notify: true });
+    return Response.json({ ok: true, message: "All folders unbound." });
+  }
+
   const id = Number(url.searchParams.get("id"));
   if (!Number.isInteger(id) || id <= 0) return Response.json({ error: "A valid folder id is required." }, { status: 400 });
   const rows = await db.select().from(monitoredFolders).where(eq(monitoredFolders.id, id));

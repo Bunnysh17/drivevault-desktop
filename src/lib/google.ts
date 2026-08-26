@@ -157,8 +157,9 @@ export function describeGoogleError(err: unknown): { code: string; message: stri
   if (status === 403) {
     return { code: "FORBIDDEN", message: "Google Drive denied this request. Check that DriveVault still has access.", retryable: false };
   }
-  if (status === 404) {
-    return { code: "NOT_FOUND", message: "The Google Drive folder no longer exists. A new one will be created.", retryable: true };
+  const is404 = status === 404 || /HTTP 404|File not found|notFound/i.test(raw);
+  if (is404) {
+    return { code: "PARENT_NOT_FOUND", message: "The Google Drive folder was deleted or missing. Re-creating folder chain...", retryable: true };
   }
   if (status === 429 || reason === "rateLimitExceeded" || reason === "userRateLimitExceeded") {
     return { code: "RATE_LIMITED", message: "Google rate-limited this upload. DriveVault will back off and retry automatically.", retryable: true };

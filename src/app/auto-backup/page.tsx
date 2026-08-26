@@ -21,6 +21,9 @@ import {
   Eye,
   HardDrive,
   AlertTriangle,
+  Pause,
+  Play,
+  FolderX,
 } from "lucide-react";
 import { useAppState } from "@/components/StateProvider";
 import { Button, Card, Field, Input, Modal, SectionTitle, Switch, ToggleRow, cn, Badge } from "@/components/ui";
@@ -46,6 +49,7 @@ export default function AutoBackupPage() {
 
   // Professional Unbind Modal State
   const [unbindTarget, setUnbindTarget] = useState<FolderDTO | null>(null);
+  const [unbindAllOpen, setUnbindAllOpen] = useState(false);
   const [unbinding, setUnbinding] = useState(false);
 
   useEffect(() => {
@@ -54,6 +58,7 @@ export default function AutoBackupPage() {
 
   if (!snapshot) return <div className="py-24 text-center text-sm text-white/40">Loading folders…</div>;
   const folders = snapshot.folders;
+  const isPaused = Boolean(snapshot.engine.paused);
 
   const notify = (text: string, ok = true) => {
     setToast({ text, ok });
@@ -93,7 +98,29 @@ export default function AutoBackupPage() {
     setBusy(folder.id);
     const res = await post<{ message: string }>("/api/folders", { id: folder.id, action: "scan" });
     setBusy(null);
-    notify(res.data?.message ?? res.error ?? "Scanning folder for files…");
+    notify(res.data?.message ?? res.error ?? "Scanning folder for files & starting backup…");
+    void refresh();
+  };
+
+  const syncAllFolders = async () => {
+    playSfx("click");
+    notify("Scanning and starting backup for all watched folders…");
+    for (const folder of folders) {
+      await post("/api/folders", { id: folder.id, action: "scan" });
+    }
+    void refresh();
+  };
+
+  const toggleEnginePause = async () => {
+    playSfx("tab");
+    if (isPaused) {
+      await post("/api/queue", { action: "resume-all" });
+      notify("Backup resumed for all folders.");
+    } else {
+      await post("/api/queue", { action: "pause-all" });
+      notify("Backup paused.");
+    }
+    void refresh();
   };
 
   const confirmUnbind = async () => {
@@ -104,6 +131,16 @@ export default function AutoBackupPage() {
     setUnbinding(false);
     notify(res.ok ? `Unbound ${unbindTarget.path}` : res.error ?? "Could not remove folder.", res.ok);
     setUnbindTarget(null);
+    void refresh();
+  };
+
+  const confirmUnbindAll = async () => {
+    playSfx("delete");
+    setUnbinding(true);
+    const res = await post("/api/folders?all=1", undefined, "DELETE");
+    setUnbinding(false);
+    setUnbindAllOpen(false);
+    notify(res.ok ? "All folders have been unbound." : res.error ?? "Could not unbind all folders.", res.ok);
     void refresh();
   };
 
@@ -130,16 +167,38 @@ export default function AutoBackupPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2.5">
+          {folders.length > 0 && (
+            <>
+              <Button
+                variant="success"
+                onClick={syncAllFolders}
+                icon={<Zap className="h-4 w-4 text-emerald-300" />}
+              >
+                Start Backup (Sync All)
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={toggleEnginePause}
+                icon={isPaused ? <Play className="h-4 w-4 text-emerald-300" /> : <Pause className="h-4 w-4 text-amber-300" />}
+              >
+                {isPaused ? "Resume Backup" : "Pause Backup"}
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => setUnbindAllOpen(true)}
+                icon={<FolderX className="h-4 w-4" />}
+              >
+                Unbind All
+              </Button>
+            </>
+          )}
           <Button
             variant="secondary"
             onClick={() => openInspector("C:\\Users\\naveen\\Videos\\Medal")}
             icon={<HardDrive className="h-4 w-4 text-cyan-300" />}
             className="border-cyan-500/30 bg-cyan-950/20 text-cyan-200 hover:bg-cyan-900/30"
           >
-            Browse & Inspect PC Files
-          </Button>
-          <Button variant="ghost" onClick={() => post("/api/demo", {})} icon={<Sparkles className="h-4 w-4 text-indigo-300" />}>
-            Create Demo Clips
+            Inspect PC Files
           </Button>
           <Button variant="primary" onClick={() => setAddOpen(true)} icon={<Plus className="h-4 w-4" />}>
             Bind New Folder
@@ -298,7 +357,7 @@ export default function AutoBackupPage() {
                         Rules
                       </Button>
                       <Button size="sm" variant="success" onClick={() => uploadExisting(folder)} icon={<PlayCircle className="h-3.5 w-3.5" />}>
-                        Sync Existing
+                        Start Backup
                       </Button>
                       <Button size="sm" variant="danger" onClick={() => setUnbindTarget(folder)} icon={<Trash2 className="h-3.5 w-3.5" />}>
                         Unbind
@@ -532,6 +591,48 @@ export default function AutoBackupPage() {
             </div>
           </div>
         )}
+      </Modal>
+
+      {/* Unbind All Folders Modal */}
+      <Modal
+        open={unbindAllOpen}
+        onClose={() => setUnbindAllOpen(false)}
+        title="Unbind All Watched Folders"
+        description="Are you sure you want to remove all monitored folder bindings?"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setUnbindAllOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              onClick={confirmUnbindAll}
+              disabled={unbinding}
+              icon={<Trash2 className="h-4 w-4" />}
+            >
+              {unbinding ? "Unbinding All..." : "Yes, Unbind All Folders"}
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <div className="rounded-2xl border border-rose-500/20 bg-rose-500/[0.08] p-4 text-xs text-rose-200 space-y-2">
+            <div className="flex items-center gap-2 font-semibold text-rose-300">
+              <AlertTriangle className="h-4 w-4 text-rose-400 shrink-0" />
+              <span>Stop Watching All {folders.length} Folders</span>
+            </div>
+            <p className="leading-relaxed text-rose-200/80">
+              DriveVault will stop monitoring all configured folders. Future files added to these folders will not be automatically uploaded.
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.05] p-3 text-xs text-emerald-300 flex items-start gap-2.5">
+            <ShieldCheck className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+            <span>
+              <strong>Your local files on your PC will NOT be deleted.</strong> Only the folder links in DriveVault are cleared.
+            </span>
+          </div>
+        </div>
       </Modal>
 
       {/* PC File & Folder Inspector Modal */}
