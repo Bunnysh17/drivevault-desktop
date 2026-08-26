@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { and, desc, eq, gte, isNotNull, sql } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, isNotNull, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { activityLogs, monitoredFolders, protectedPaths, uploadQueue, uploadedFiles } from "@/db/schema";
 import {
@@ -7,7 +7,7 @@ import {
   localDiskStats,
   parseExtensionList,
 } from "./fs-utils";
-import { fetchDriveAbout, getAuthStatus } from "./google";
+import { fetchDriveAbout, getAuthStatus, listDriveVaultFiles } from "./google";
 import { listActivity, getToasts } from "./log";
 import { getSettings } from "./settings";
 import { evaluateDeletion } from "./safety";
@@ -21,10 +21,58 @@ import type {
   QueueItemDTO,
 } from "./types";
 
-const g = globalThis as typeof globalThis & { __drivevaultDriveQuota?: { at: number; data: DashboardSnapshot["drive"] } };
+const g = globalThis as typeof globalThis & { 
+  __drivevaultDriveQuota?: { at: number; data: DashboardSnapshot["drive"] };
+  __drivevaultLastSyncAt?: number;
+};
 
 export function invalidateDriveQuota() {
   g.__drivevaultDriveQuota = undefined;
+  g.__drivevaultLastSyncAt = 0;
+}
+
+/** Synchronizes DB uploadedFiles records with active files currently on Google Drive. */
+export async function syncUploadedFilesWithDrive(force = false) {
+  const now = Date.now();
+  const lastSync = g.__drivevaultLastSyncAt ?? 0;
+  if (!force && now - lastSync < 10_000) return;
+  g.__drivevaultLastSyncAt = now;
+
+  const auth = await getAuthStatus().catch(() => ({ connected: false }));
+  if (!auth.connected) return;
+
+  try {
+    const tracked = await db
+      .select({ id: uploadedFiles.id, driveFileId: uploadedFiles.driveFileId, queueId: uploadedFiles.queueId })
+      .from(uploadedFiles);
+
+    if (tracked.length === 0) return;
+
+    const driveFiles = await listDriveVaultFiles(false);
+    const activeDriveIdSet = new Set(driveFiles.map((f) => f.id));
+
+    const deadTrackedIds: number[] = [];
+    const deadQueueIds: number[] = [];
+
+    for (const row of tracked) {
+      if (!activeDriveIdSet.has(row.driveFileId)) {
+        deadTrackedIds.push(row.id);
+        if (row.queueId) deadQueueIds.push(row.queueId);
+      }
+    }
+
+    if (deadTrackedIds.length > 0) {
+      await db.delete(uploadedFiles).where(inArray(uploadedFiles.id, deadTrackedIds));
+      if (deadQueueIds.length > 0) {
+        await db
+          .update(uploadQueue)
+          .set({ status: "canceled", updatedAt: new Date() })
+          .where(inArray(uploadQueue.id, deadQueueIds));
+      }
+    }
+  } catch {
+    // Best-effort remote reconciliation
+  }
 }
 
 function toIso(d: Date | null | undefined): string | null {
@@ -108,6 +156,7 @@ async function driveQuota(): Promise<DashboardSnapshot["drive"]> {
 }
 
 async function computeStats(driveUsageBytes = 0) {
+  await syncUploadedFilesWithDrive();
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);
   const startOfWeek = new Date(startOfDay.getTime() - 6 * 86_400_000);

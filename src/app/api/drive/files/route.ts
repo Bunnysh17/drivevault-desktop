@@ -1,6 +1,10 @@
 import { z } from "zod";
+import { inArray } from "drizzle-orm";
+import { db } from "@/db";
+import { uploadedFiles, uploadQueue } from "@/db/schema";
 import { listDriveVaultFiles, permanentlyDeleteDriveFile, setDriveFileTrashed, renameDriveFile, createDriveFolder } from "@/lib/google";
 import { logActivity } from "@/lib/log";
+import { invalidateDriveQuota } from "@/lib/snapshot";
 
 export const dynamic = "force-dynamic";
 
@@ -61,6 +65,11 @@ export async function POST(request: Request) {
           // continue with others
         }
       }
+      // Purge from DB records
+      await db.delete(uploadedFiles).where(inArray(uploadedFiles.driveFileId, targetIds)).catch(() => undefined);
+      await db.update(uploadQueue).set({ status: "canceled", updatedAt: new Date() }).where(inArray(uploadQueue.driveFileId, targetIds)).catch(() => undefined);
+      invalidateDriveQuota();
+
       await logActivity("drive", `Permanently deleted ${deletedCount} file(s) from Drive.`, { status: "deleted" });
       return Response.json({ ok: true, count: deletedCount });
     } else if (parsed.data.action === "rename") {
@@ -80,6 +89,12 @@ export async function POST(request: Request) {
           // continue
         }
       }
+      if (isTrash) {
+        await db.delete(uploadedFiles).where(inArray(uploadedFiles.driveFileId, targetIds)).catch(() => undefined);
+        await db.update(uploadQueue).set({ status: "canceled", updatedAt: new Date() }).where(inArray(uploadQueue.driveFileId, targetIds)).catch(() => undefined);
+      }
+      invalidateDriveQuota();
+
       await logActivity(
         "drive",
         `Drive ${isTrash ? "moved to bin" : "restored"} for ${processedCount} file(s).`,
