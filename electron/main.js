@@ -109,14 +109,39 @@ function logDebug(msg, err) {
   console.log(msg, err || "");
 }
 
+function killPortProcess(port) {
+  try {
+    if (process.platform === "win32") {
+      const { execSync } = require("child_process");
+      const out = execSync(`netstat -ano | findstr :${port}`, { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
+      const lines = out.split("\n");
+      for (const line of lines) {
+        if (line.includes("LISTENING")) {
+          const parts = line.trim().split(/\s+/);
+          const pid = parts[parts.length - 1];
+          if (pid && pid !== "0" && parseInt(pid, 10) !== process.pid) {
+            logDebug(`[DriveVault] Terminating stale process PID ${pid} on port ${port}`);
+            try {
+              execSync(`taskkill /F /PID ${pid}`, { stdio: "ignore" });
+            } catch (e) {}
+          }
+        }
+      }
+    }
+  } catch (e) {}
+}
+
 async function ensureServerRunning() {
   logDebug("[DriveVault] Starting ensureServerRunning...");
 
-  // 1. Check if server is already running on our designated port
-  const isReady = await checkServerReady(APP_URL);
-  if (isReady) {
-    logDebug(`[DriveVault] Server already active on ${APP_URL}`);
-    return;
+  if (app && app.isPackaged) {
+    killPortProcess(PORT);
+  } else {
+    const isReady = await checkServerReady(APP_URL);
+    if (isReady) {
+      logDebug(`[DriveVault] Server already active on ${APP_URL}`);
+      return;
+    }
   }
 
   const projectDir = getProjectDir();
@@ -412,7 +437,12 @@ if (!gotSingleInstanceLock) {
     }
     if (serverProcess) {
       try {
-        serverProcess.kill();
+        if (process.platform === "win32" && serverProcess.pid) {
+          const { execSync } = require("child_process");
+          execSync(`taskkill /F /T /PID ${serverProcess.pid}`, { stdio: "ignore" });
+        } else {
+          serverProcess.kill();
+        }
       } catch (e) {}
     }
   });

@@ -317,7 +317,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <span className="flex h-1.5 w-1.5 rounded-full bg-indigo-400 shadow-[0_0_6px_#818cf8]" />
                 <span className="text-[10px] font-bold tracking-wide text-white/40">DriveVault</span>
               </div>
-              <span className="rounded-full bg-indigo-500/15 border border-indigo-400/25 px-2 py-0.5 text-[9px] font-bold text-indigo-300 tracking-wider">v1.0.0</span>
+              <span className="rounded-full bg-indigo-500/15 border border-indigo-400/25 px-2 py-0.5 text-[9px] font-bold text-indigo-300 tracking-wider">v1.1.0</span>
             </div>
           ) : null}
           <button

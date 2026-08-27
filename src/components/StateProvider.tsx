@@ -40,9 +40,66 @@ export function useAppState() {
   return ctx;
 }
 
+const DEFAULT_SNAPSHOT: DashboardSnapshot = {
+  generatedAt: new Date().toISOString(),
+  connected: false,
+  account: null,
+  authError: null,
+  engine: {
+    running: true,
+    paused: false,
+    gamingMode: true,
+    gamingDetected: false,
+    matchedGames: [],
+    activeUploads: 0,
+    queuedCount: 0,
+  },
+  local: {
+    totalBytes: 0,
+    freeBytes: 0,
+    usedBytes: 0,
+    usedPercent: 0,
+  },
+  drive: {
+    limitBytes: 0,
+    usageBytes: 0,
+    driveUsageBytes: 0,
+    remainingBytes: 0,
+    connected: false,
+  },
+  currentUpload: null,
+  stats: {
+    filesUploaded: 0,
+    totalCloudBytes: 0,
+    uploadedToday: 0,
+    uploadedTodayBytes: 0,
+    uploadedWeek: 0,
+    uploadedWeekBytes: 0,
+    failed: 0,
+    spaceFreedBytes: 0,
+    potentialFreeBytes: 0,
+    pendingCount: 0,
+    completedCount: 0,
+    totalQueueCount: 0,
+    remainingBytes: 0,
+    activeSpeedBps: 0,
+    categories: {
+      videos: { bytes: 0, count: 0, pct: 0 },
+      images: { bytes: 0, count: 0, pct: 0 },
+      docs: { bytes: 0, count: 0, pct: 0 },
+      others: { bytes: 0, count: 0, pct: 0 },
+    },
+  },
+  queue: [],
+  folders: [],
+  recent: [],
+  settings: DEFAULT_SETTINGS,
+  notifications: [],
+};
+
 export function StateProvider({ children }: { children: ReactNode }) {
-  const [snapshot, setSnapshot] = useState<DashboardSnapshot | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [snapshot, setSnapshot] = useState<DashboardSnapshot>(DEFAULT_SNAPSHOT);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState<number | null>(null);
   const [dismissed, setDismissed] = useState<string[]>([]);
@@ -53,11 +110,14 @@ export function StateProvider({ children }: { children: ReactNode }) {
     inFlight.current = true;
     try {
       const res = await fetch("/api/state", { cache: "no-store" });
-      if (!res.ok) throw new Error("DriveVault service is not responding.");
-      const data = (await res.json()) as DashboardSnapshot;
-      setSnapshot(data);
-      setLastUpdate(Date.now());
-      setError(null);
+      if (res.ok) {
+        const data = (await res.json()) as DashboardSnapshot;
+        if (data && typeof data === "object") {
+          setSnapshot(data);
+          setLastUpdate(Date.now());
+          setError(null);
+        }
+      }
     } catch (err) {
       setError((err as Error).message);
     } finally {
