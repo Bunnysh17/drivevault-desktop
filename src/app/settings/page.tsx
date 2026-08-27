@@ -330,14 +330,14 @@ export default function SettingsPage() {
       <Card delay={0.22}>
         <SectionTitle title="Network & Upload Engine" right={<Upload className="h-4 w-4 text-white/30" />} />
         <div className="grid gap-4 sm:grid-cols-3">
-          <Field label="Concurrent Uploads">
-            <Input type="number" min={1} max={8} value={s.concurrentUploads} onChange={(e) => void updateSettings({ concurrentUploads: Number(e.target.value) })} />
+          <Field label="Concurrent Uploads (Parallel Streams)">
+            <Input type="number" min={1} max={16} value={s.concurrentUploads} onChange={(e) => void updateSettings({ concurrentUploads: Number(e.target.value) })} />
           </Field>
           <Field label="Speed Limit (KB/s)" hint="0 = unlimited full speed">
             <Input type="number" min={0} value={s.uploadSpeedLimitKbps} onChange={(e) => void updateSettings({ uploadSpeedLimitKbps: Number(e.target.value) })} />
           </Field>
           <Field label="Resumable Chunk Size (MB)">
-            <Input type="number" min={1} max={64} value={s.chunkSizeMb} onChange={(e) => void updateSettings({ chunkSizeMb: Number(e.target.value) })} />
+            <Input type="number" min={1} max={128} value={s.chunkSizeMb} onChange={(e) => void updateSettings({ chunkSizeMb: Number(e.target.value) })} />
           </Field>
         </div>
       </Card>

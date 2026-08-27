@@ -18,9 +18,9 @@ export function clampSettings(input: Partial<AppSettings>): Partial<AppSettings>
       delete out[key as string];
     }
   };
-  num("concurrentUploads", 1, 8);
+  num("concurrentUploads", 1, 16);
   num("uploadSpeedLimitKbps", 0, 1_000_000);
-  num("chunkSizeMb", 1, 64);
+  num("chunkSizeMb", 1, 128);
   num("maxRetries", 0, 20);
   num("retryDelayMs", 500, 600_000);
   num("retryBackoffFactor", 1, 5);
