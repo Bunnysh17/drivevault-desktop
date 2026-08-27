@@ -24,11 +24,11 @@ if (!process.env.DATABASE_URL) {
 }
 
 process.env.NODE_ENV = "production";
-process.env.PORT = "39821";
-process.env.HOSTNAME = "127.0.0.1";
+process.env.PORT = process.env.PORT || "3000";
+process.env.HOSTNAME = "localhost";
 
-let PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 39821;
-let HOST = process.env.HOSTNAME || "127.0.0.1";
+let PORT = parseInt(process.env.PORT, 10) || 3000;
+let HOST = process.env.HOSTNAME || "localhost";
 let APP_URL = `http://${HOST}:${PORT}`;
 
 let mainWindow = null;
