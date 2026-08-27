@@ -156,7 +156,8 @@ async function driveQuota(): Promise<DashboardSnapshot["drive"]> {
 }
 
 async function computeStats(driveUsageBytes = 0) {
-  await syncUploadedFilesWithDrive();
+  // Fire-and-forget: don't let Drive sync block dashboard rendering
+  syncUploadedFilesWithDrive().catch(() => {});
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);
   const startOfWeek = new Date(startOfDay.getTime() - 6 * 86_400_000);
@@ -321,7 +322,7 @@ export async function buildSnapshot(): Promise<DashboardSnapshot> {
     .select()
     .from(uploadQueue)
     .orderBy(desc(uploadQueue.createdAt))
-    .limit(10000);
+    .limit(500);
 
   const queue = queueRows.map((r) => mapQueueItem(r));
   const activeRows = queueRows.filter((r) => r.status === "uploading" || r.status === "preparing");
