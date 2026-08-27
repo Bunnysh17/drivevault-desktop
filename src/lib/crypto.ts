@@ -9,7 +9,10 @@ import path from "node:path";
  * development so nothing is ever stored in plaintext.
  */
 
-const KEY_PATH = path.join(process.cwd(), ".vault", "vault.key");
+function getVaultKeyPath(): string {
+  const base = process.env.APPDATA || process.env.USERPROFILE || process.cwd();
+  return path.join(base, "DriveVault", "vault.key");
+}
 
 function loadVaultKey(): Buffer {
   const fromEnv = process.env.DRIVEVAULT_VAULT_KEY;
@@ -21,12 +24,13 @@ function loadVaultKey(): Buffer {
     return crypto.createHash("sha256").update(legacy).digest();
   }
   try {
-    if (fs.existsSync(KEY_PATH)) {
-      return Buffer.from(fs.readFileSync(KEY_PATH, "utf8").trim(), "hex");
+    const keyPath = getVaultKeyPath();
+    if (fs.existsSync(keyPath)) {
+      return Buffer.from(fs.readFileSync(keyPath, "utf8").trim(), "hex");
     }
     const key = crypto.randomBytes(32);
-    fs.mkdirSync(path.dirname(KEY_PATH), { recursive: true });
-    fs.writeFileSync(KEY_PATH, key.toString("hex"), { mode: 0o600 });
+    fs.mkdirSync(path.dirname(keyPath), { recursive: true });
+    fs.writeFileSync(keyPath, key.toString("hex"), { mode: 0o600 });
     return key;
   } catch {
     // Last resort for read-only filesystems: derive from a stable machine id.
